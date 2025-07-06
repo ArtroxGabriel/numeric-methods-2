@@ -21,6 +21,10 @@ var (
 type TwoPoints struct {
 }
 
+func NewTwoPoints() *TwoPoints {
+	return &TwoPoints{}
+}
+
 func (gl *TwoPoints) calculate(f func(float64) float64, a, b float64) float64 {
 	h := (b - a) / 2.0
 	x := getXFunc(a, b)

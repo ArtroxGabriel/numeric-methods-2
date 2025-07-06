@@ -19,6 +19,10 @@ var (
 
 type ClosedOrder2 struct{}
 
+func NewClosedOrder2() *ClosedOrder2 {
+	return &ClosedOrder2{}
+}
+
 func (nc *ClosedOrder2) calculate(
 	f func(float64) float64,
 	a, b float64,
@@ -28,6 +32,10 @@ func (nc *ClosedOrder2) calculate(
 }
 
 type ClosedOrder3 struct{}
+
+func NewClosedOrder3() *ClosedOrder3 {
+	return &ClosedOrder3{}
+}
 
 func (nc *ClosedOrder3) calculate(
 	f func(float64) float64,
@@ -39,6 +47,10 @@ func (nc *ClosedOrder3) calculate(
 
 type ClosedOrder4 struct{}
 
+func NewClosedOrder4() *ClosedOrder4 {
+	return &ClosedOrder4{}
+}
+
 func (nc *ClosedOrder4) calculate(
 	f func(float64) float64,
 	a, b float64,
@@ -48,6 +60,10 @@ func (nc *ClosedOrder4) calculate(
 }
 
 type OpenOrder2 struct{}
+
+func NewOpenOrder2() *OpenOrder2 {
+	return &OpenOrder2{}
+}
 
 func (nc *OpenOrder2) calculate(
 	f func(float64) float64,
@@ -59,6 +75,10 @@ func (nc *OpenOrder2) calculate(
 
 type OpenOrder3 struct{}
 
+func NewOpenOrder3() *OpenOrder3 {
+	return &OpenOrder3{}
+}
+
 func (nc *OpenOrder3) calculate(
 	f func(float64) float64,
 	a, b float64,
@@ -68,6 +88,10 @@ func (nc *OpenOrder3) calculate(
 }
 
 type OpenOrder4 struct{}
+
+func NewOpenOrder4() *OpenOrder4 {
+	return &OpenOrder4{}
+}
 
 func (nc OpenOrder4) calculate(
 	f func(float64) float64,
