@@ -1,7 +1,58 @@
 package newtoncotes
 
+import "math"
+
 type NewtonCotesCalculator interface {
-	calculate(f func(float64) float64, a, b float64) float64
+	Calculate(f func(float64) float64, a, b float64) float64
+}
+
+type IntegrateResult struct {
+	Result          float64
+	NumOfIterations int
+}
+type integrationTask struct {
+	a, b, tolerance float64
+}
+
+func Integrate(
+	method NewtonCotesCalculator,
+	f func(float64) float64,
+	a, b, e float64,
+) *IntegrateResult {
+	result, iterations := integrateRecursive(method, f, a, b, e)
+
+	return &IntegrateResult{
+		Result:          result,
+		NumOfIterations: iterations,
+	}
+}
+
+func integrateRecursive(
+	method NewtonCotesCalculator,
+	f func(float64) float64,
+	a, b,
+	tolerance float64,
+) (float64, int) {
+	integralWhole := method.Calculate(f, a, b)
+	mid := (a + b) / 2.0
+	integralPart1 := method.Calculate(f, a, mid)
+	integralPart2 := method.Calculate(f, mid, b)
+	sumOfParts := integralPart1 + integralPart2
+
+	err := math.Abs(integralWhole - sumOfParts)
+
+	if err < tolerance {
+		return sumOfParts, 1
+	}
+
+	newTolerance := tolerance / 2.0
+	leftResult, leftIters := integrateRecursive(method, f, a, mid, newTolerance)
+	rightResult, rightIters := integrateRecursive(method, f, mid, b, newTolerance)
+
+	totalResult := leftResult + rightResult
+	totalIterations := 1 + leftIters + rightIters
+
+	return totalResult, totalIterations
 }
 
 // check in compile time
@@ -23,7 +74,7 @@ func NewClosedOrder2() *ClosedOrder2 {
 	return &ClosedOrder2{}
 }
 
-func (nc *ClosedOrder2) calculate(
+func (nc *ClosedOrder2) Calculate(
 	f func(float64) float64,
 	a, b float64,
 ) float64 {
@@ -37,7 +88,7 @@ func NewClosedOrder3() *ClosedOrder3 {
 	return &ClosedOrder3{}
 }
 
-func (nc *ClosedOrder3) calculate(
+func (nc *ClosedOrder3) Calculate(
 	f func(float64) float64,
 	a, b float64,
 ) float64 {
@@ -51,7 +102,7 @@ func NewClosedOrder4() *ClosedOrder4 {
 	return &ClosedOrder4{}
 }
 
-func (nc *ClosedOrder4) calculate(
+func (nc *ClosedOrder4) Calculate(
 	f func(float64) float64,
 	a, b float64,
 ) float64 {
@@ -65,7 +116,7 @@ func NewOpenOrder2() *OpenOrder2 {
 	return &OpenOrder2{}
 }
 
-func (nc *OpenOrder2) calculate(
+func (nc *OpenOrder2) Calculate(
 	f func(float64) float64,
 	a, b float64,
 ) float64 {
@@ -79,7 +130,7 @@ func NewOpenOrder3() *OpenOrder3 {
 	return &OpenOrder3{}
 }
 
-func (nc *OpenOrder3) calculate(
+func (nc *OpenOrder3) Calculate(
 	f func(float64) float64,
 	a, b float64,
 ) float64 {
@@ -93,7 +144,7 @@ func NewOpenOrder4() *OpenOrder4 {
 	return &OpenOrder4{}
 }
 
-func (nc OpenOrder4) calculate(
+func (nc OpenOrder4) Calculate(
 	f func(float64) float64,
 	a, b float64,
 ) float64 {
