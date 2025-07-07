@@ -15,9 +15,9 @@ Relatórios das unidades da disciplina de Métodos Numéricos 2.
 
 - [ ] [Unidade 2](./unidade2/)
 
-  - [ ] Fórmulas Newton-Cotes (graus 1 a 3, abertas e fechadas)
-  - [ ] Gauss-Legendre (n=2, 3, 4 pontos)
-  - [ ] Gauss-Hermite (n=2, 3, 4 pontos)
+  - [x] Fórmulas Newton-Cotes (graus 1 a 3, abertas e fechadas)
+  - [x] Gauss-Legendre (n=2, 3, 4 pontos)
+  - [x] Gauss-Hermite (n=2, 3, 4 pontos)
   - [ ] Gauss-Laguerre (n=2, 3, 4 pontos)
   - [ ] Gauss-Chebyshev (n=2, 3, 4 pontos)
   - [ ] "Dino" Exponencial simples e dupla

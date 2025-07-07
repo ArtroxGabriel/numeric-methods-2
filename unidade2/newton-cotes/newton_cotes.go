@@ -1,15 +1,16 @@
+// Package newtoncotes implements the Newton-Cotes numerical integration methods.
 package newtoncotes
 
-import "math"
+import (
+	"math"
+
+	"github.com/ArtroxGabriel/numeric-methods-2/unidade2/result"
+)
 
 type NewtonCotesCalculator interface {
 	Calculate(f func(float64) float64, a, b float64) float64
 }
 
-type IntegrateResult struct {
-	Result          float64
-	NumOfIterations int
-}
 type integrationTask struct {
 	a, b, tolerance float64
 }
@@ -18,13 +19,10 @@ func Integrate(
 	method NewtonCotesCalculator,
 	f func(float64) float64,
 	a, b, e float64,
-) *IntegrateResult {
-	result, iterations := integrateRecursive(method, f, a, b, e)
+) *result.IntegrateResult {
+	val, iterations := integrateRecursive(method, f, a, b, e)
 
-	return &IntegrateResult{
-		Result:          result,
-		NumOfIterations: iterations,
-	}
+	return result.NewIntegrateResult(val, iterations)
 }
 
 func integrateRecursive(

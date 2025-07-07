@@ -1,3 +1,4 @@
+// Package gausslaguerre provides implementations of the Gauss-Laguerre quadrature method
 package gausslaguerre
 
 import "math"
@@ -6,13 +7,20 @@ type GaussLaguerreCalculator interface {
 	Calculate(f func(float64) float64) float64
 }
 
+func Integrate(calculator GaussLaguerreCalculator, f func(float64) float64) float64 {
+	return calculator.Calculate(f)
+}
+
 var (
 	_ GaussLaguerreCalculator = (*TwoPoints)(nil)
 	_ GaussLaguerreCalculator = (*ThreePoints)(nil)
 	_ GaussLaguerreCalculator = (*FourPoints)(nil)
 )
 
-type TwoPoints struct {
+type TwoPoints struct{}
+
+func NewTwoPoints() *TwoPoints {
+	return &TwoPoints{}
 }
 
 func (gl *TwoPoints) Calculate(f func(float64) float64) float64 {
@@ -23,7 +31,10 @@ func (gl *TwoPoints) Calculate(f func(float64) float64) float64 {
 
 type ThreePoints struct{}
 
-// Calculate implements GaussLaguerreCalculator.
+func NewThreePoints() *ThreePoints {
+	return &ThreePoints{}
+}
+
 func (gl *ThreePoints) Calculate(f func(float64) float64) float64 {
 	x1 := 0.4157745568
 	x2 := 2.2942803603
@@ -38,6 +49,10 @@ func (gl *ThreePoints) Calculate(f func(float64) float64) float64 {
 
 type FourPoints struct{}
 
+func NewFourPoints() *FourPoints {
+	return &FourPoints{}
+}
+
 func (gl *FourPoints) Calculate(f func(float64) float64) float64 {
 	x := [...]float64{
 		0.32255,
@@ -47,13 +62,13 @@ func (gl *FourPoints) Calculate(f func(float64) float64) float64 {
 	}
 
 	w := func(xi float64) float64 {
-		L_5 := -(math.Pow(xi, 5) / 120.0) +
+		L5 := -(math.Pow(xi, 5) / 120.0) +
 			(5 * math.Pow(xi, 4) / 24.0) +
-			-(5 * math.Pow(xi, 3) / 3.0) +
+			-(5 * xi * xi * xi / 3.0) +
 			(5 * xi * xi) +
 			-(5 * xi) + 1
 
-		return xi / (25.0 * L_5 * L_5)
+		return xi / (25.0 * L5 * L5)
 	}
 
 	return w(x[0])*f(x[0]) + w(x[1])*f(x[1]) + w(x[2])*f(x[2]) + w(x[3])*f(x[3])

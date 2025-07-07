@@ -1,3 +1,4 @@
+// Package gausschebyshev provides implementations of Gauss-Chebyshev quadrature methods.
 package gausschebyshev
 
 import "math"

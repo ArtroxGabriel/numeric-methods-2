@@ -1,11 +1,11 @@
-package newtoncotes_test
+package gausslegendre_test
 
 import (
 	"fmt"
 	"math"
 	"testing"
 
-	newtoncotes "github.com/ArtroxGabriel/numeric-methods-2/unidade2/newton-cotes"
+	gausslegendre "github.com/ArtroxGabriel/numeric-methods-2/unidade2/gauss-legendre"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -33,18 +33,16 @@ var testCases = []struct {
 
 func TestIntegrate(t *testing.T) {
 	t.Parallel()
+
 	const tolerance = 1e-6
 
 	calculators := []struct {
 		name       string
-		calculator newtoncotes.NewtonCotesCalculator
+		calculator gausslegendre.GaussLegendreCalculator
 	}{
-		{"ClosedOrder2", newtoncotes.NewClosedOrder2()},
-		{"ClosedOrder3", newtoncotes.NewClosedOrder3()},
-		{"ClosedOrder4", newtoncotes.NewClosedOrder4()},
-		{"OpenOrder2", newtoncotes.NewOpenOrder2()},
-		{"OpenOrder3", newtoncotes.NewOpenOrder3()},
-		{"OpenOrder4", newtoncotes.NewOpenOrder4()},
+		{"2 points", gausslegendre.NewTwoPoints()},
+		{"3 points", gausslegendre.NewThreePoints()},
+		{"4 points", gausslegendre.NewFourPoints()},
 	}
 
 	for _, calc := range calculators {
@@ -52,7 +50,7 @@ func TestIntegrate(t *testing.T) {
 			testName := fmt.Sprintf("%s/%s", calc.name, tc.name)
 
 			t.Run(testName, func(t *testing.T) {
-				result := newtoncotes.Integrate(calc.calculator, tc.f, tc.a, tc.b, tolerance)
+				result := gausslegendre.Integrate(calc.calculator, tc.f, tc.a, tc.b, tolerance)
 
 				assert.InDelta(t, tc.expected, result.Result, tolerance)
 
