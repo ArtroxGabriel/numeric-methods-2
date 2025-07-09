@@ -3,6 +3,7 @@ package gausshermite
 
 import "math"
 
+// GaussHermiteCalculator é a interface para os métodos de Gauss-Hermite
 type GaussHermiteCalculator interface {
 	hermite()
 	Calculate(f func(float64) float64) float64
@@ -18,6 +19,7 @@ var (
 	_ GaussHermiteCalculator = (*FourPoints)(nil)
 )
 
+// TwoPoints é o método de Gauss-Hermite N = 2
 type TwoPoints struct{}
 
 func (gh *TwoPoints) hermite() {}
@@ -27,7 +29,10 @@ func NewTwoPoints() *TwoPoints {
 }
 
 func (gh *TwoPoints) Calculate(f func(float64) float64) float64 {
+	// abscissas dos pontos de Gauss-Hermite N = 2
 	x1, x2 := -math.Sqrt2/2.0, math.Sqrt2/2.0
+
+	// pesos correspondentes w1 = w2 = sqrt(pi) / 2
 	return (f(x1) + f(x2)) * (math.SqrtPi / 2.0)
 }
 
@@ -39,6 +44,7 @@ type ThreePoints struct {
 func (gh *ThreePoints) hermite() {}
 
 func NewThreePoints() *ThreePoints {
+	// absicssas e pesos do gauss-hermite N=3, formula analitica encontrada nas notas de aula
 	return &ThreePoints{
 		s: [3]float64{
 			-math.Sqrt(6.0) / 2.0,
@@ -71,6 +77,7 @@ type FourPoints struct {
 func (gh *FourPoints) hermite() {}
 
 func NewFourPoints() *FourPoints {
+	// absicssas e pesos do gauss-hermite N=4, formula analitica encontrada nas notas de aula
 	return &FourPoints{
 		s: [4]float64{
 			-math.Sqrt((3.0 + math.Sqrt(6)) / 2.0),

@@ -3,6 +3,7 @@ package gausschebyshev
 
 import "math"
 
+// GaussChebyshevCalculator é a interface para os métodos de Gauss-Chebyshev
 type GaussChebyshevCalculator interface {
 	chebyshev()
 	Calculate(f func(float64) float64) float64
@@ -21,12 +22,12 @@ var (
 type TwoPoints struct{}
 
 func (t *TwoPoints) chebyshev() {}
-
 func NewTwoPoints() *TwoPoints {
 	return &TwoPoints{}
 }
 
 func (t *TwoPoints) Calculate(f func(float64) float64) float64 {
+	// absissas dos pontos de Gauss-Chebyshev N = 2, calculadas analiticamente
 	x1 := -0.5 * math.Sqrt2
 	x2 := 0.5 * math.Sqrt2
 
@@ -36,12 +37,12 @@ func (t *TwoPoints) Calculate(f func(float64) float64) float64 {
 type ThreePoints struct{}
 
 func (t *ThreePoints) chebyshev() {}
-
 func NewThreePoints() *ThreePoints {
 	return &ThreePoints{}
 }
 
 func (t *ThreePoints) Calculate(f func(float64) float64) float64 {
+	// absissas dos pontos de Gauss-Chebyshev N = 3, calculadas analiticamente
 	x1 := -math.Sqrt(3) / 2.0
 	x2 := math.Sqrt(3) / 2.0
 
@@ -57,6 +58,7 @@ func NewFourPoints() *FourPoints {
 }
 
 func (*FourPoints) Calculate(f func(float64) float64) float64 {
+	// absissas dos pontos de Gauss-Chebyshev N = 4, calculadas analiticamente
 	x := [4]float64{
 		-math.Sqrt(2+math.Sqrt2) / 2.0,
 		-math.Sqrt(2-math.Sqrt2) / 2.0,

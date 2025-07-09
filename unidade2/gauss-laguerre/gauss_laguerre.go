@@ -3,6 +3,7 @@ package gausslaguerre
 
 import "math"
 
+// GaussLaguerreCalculator é a interface para os métodos de Gauss-Laguerre
 type GaussLaguerreCalculator interface {
 	laguerre()
 	Calculate(f func(float64) float64) float64
@@ -18,6 +19,7 @@ var (
 	_ GaussLaguerreCalculator = (*FourPoints)(nil)
 )
 
+// TwoPoints é o método de Gauss-Laguerre N = 2
 type TwoPoints struct {
 	s [2]float64
 	w [2]float64
@@ -26,6 +28,7 @@ type TwoPoints struct {
 func (gl *TwoPoints) laguerre() {}
 
 func NewTwoPoints() *TwoPoints {
+	// Abscissas e correspondentes pesos do gauss-laguerre N = 2
 	return &TwoPoints{
 		s: [2]float64{
 			2.0 - math.Sqrt2,
@@ -55,6 +58,7 @@ type ThreePoints struct {
 func (gl *ThreePoints) laguerre() {}
 
 func NewThreePoints() *ThreePoints {
+	// Abscissas do gauss-laguerre N = 3, calculadas com wolfram alpha
 	return &ThreePoints{
 		s: [3]float64{
 			0.415774556783479,
@@ -65,6 +69,7 @@ func NewThreePoints() *ThreePoints {
 }
 
 func (gl *ThreePoints) Calculate(f func(float64) float64) float64 {
+	// função auxiliar para calcular o peso em tempo de execução, resultando em uma melhor precisão
 	w := func(xi float64) float64 {
 		L5 := (math.Pow(xi, 4) / 24.0) +
 			-(2.0 * xi * xi * xi / 3.0) +
@@ -102,6 +107,7 @@ func NewFourPoints() *FourPoints {
 }
 
 func (gl *FourPoints) Calculate(f func(float64) float64) float64 {
+	// função auxiliar para calcular o peso em tempo de execução, resultando em uma melhor precisão
 	w := func(xi float64) float64 {
 		L5 := -(math.Pow(xi, 5) / 120.0) +
 			(5.0 * math.Pow(xi, 4) / 24.0) +

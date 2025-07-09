@@ -7,16 +7,19 @@ import (
 	"github.com/ArtroxGabriel/numeric-methods-2/unidade2/result"
 )
 
+// getXFunc é a função auxiliar que transforma o intervalo [a, b] em [-1, 1]
 func getXFunc(a, b float64) func(float64) float64 {
 	return func(s float64) float64 {
 		return (a + b + (a-b)*s) / 2.0
 	}
 }
 
+// GaussLegendreCalculator é a interface para os métodos de Gauss-Legendre
 type GaussLegendreCalculator interface {
 	Calculate(f func(float64) float64, a, b float64) float64
 }
 
+// Integrate realiza a integração numérica usando o método de Gauss-Legendre
 func Integrate(
 	method GaussLegendreCalculator,
 	f func(float64) float64,
@@ -27,6 +30,7 @@ func Integrate(
 	return result.NewIntegrateResult(val, iterations)
 }
 
+// integrateRecursive é uma função recursiva que divide o intervalo [a, b] em duas partes
 func integrateRecursive(
 	method GaussLegendreCalculator,
 	f func(float64) float64,
@@ -61,10 +65,12 @@ var (
 	_ GaussLegendreCalculator = (*FourPoints)(nil)
 )
 
+// TwoPoints é o método de Gauss-Legendre N = 2
 type TwoPoints struct {
 	s [2]float64
 }
 
+// NewTwoPoints cria uma nova instância do método de Gauss-Legendre com 2 pontos
 func NewTwoPoints() *TwoPoints {
 	return &TwoPoints{
 		s: [2]float64{
@@ -81,6 +87,7 @@ func (gl *TwoPoints) Calculate(f func(float64) float64, a, b float64) float64 {
 	return h * acc
 }
 
+// ThreePoints é o método de Gauss-Legendre N = 3
 type ThreePoints struct {
 	s [3]float64
 	w [3]float64
@@ -111,12 +118,14 @@ func (gl *ThreePoints) Calculate(f func(float64) float64, a, b float64) float64 
 	return h * acc
 }
 
+// FourPoints é o método de Gauss-Legendre N = 4
 type FourPoints struct {
 	s [4]float64
 	w [4]float64
 }
 
 func NewFourPoints() *FourPoints {
+	// abscissas e pesos calculados utilizando o wolfram alpha
 	return &FourPoints{
 		s: [4]float64{
 			-math.Sqrt(3.0/7.0 + 2.0/7.0*math.Sqrt(6.0/5.0)),

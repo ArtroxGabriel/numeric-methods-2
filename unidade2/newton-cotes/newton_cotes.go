@@ -7,14 +7,12 @@ import (
 	"github.com/ArtroxGabriel/numeric-methods-2/unidade2/result"
 )
 
+// NewtonCotesCalculator é a interface para os metodos de newton-cotes
 type NewtonCotesCalculator interface {
 	Calculate(f func(float64) float64, a, b float64) float64
 }
 
-type integrationTask struct {
-	a, b, tolerance float64
-}
-
+// Integrate realize a integração numérica usando o método de Newton-Cotes
 func Integrate(
 	method NewtonCotesCalculator,
 	f func(float64) float64,
@@ -25,6 +23,7 @@ func Integrate(
 	return result.NewIntegrateResult(val, iterations)
 }
 
+// integrateRecursive é uma função recursiva que divide o intervalo [a, b] em duas partes
 func integrateRecursive(
 	method NewtonCotesCalculator,
 	f func(float64) float64,
@@ -66,6 +65,7 @@ var (
 	_ NewtonCotesCalculator = (*OpenOrder4)(nil)
 )
 
+// ClosedOrder2 é o metodo de newton-cotes fechado de ordem 2
 type ClosedOrder2 struct{}
 
 func NewClosedOrder2() *ClosedOrder2 {
@@ -80,6 +80,7 @@ func (nc *ClosedOrder2) Calculate(
 	return (f(a) + f(b)) * (h / 2)
 }
 
+// ClosedOrder3 é o metodo de newton-cotes fechado de ordem 3
 type ClosedOrder3 struct{}
 
 func NewClosedOrder3() *ClosedOrder3 {
@@ -94,6 +95,7 @@ func (nc *ClosedOrder3) Calculate(
 	return (f(a) + 4.0*f(a+h) + f(b)) * (h / 3.0)
 }
 
+// ClosedOrder4 é o metodo de newton-cotes fechado de ordem 4
 type ClosedOrder4 struct{}
 
 func NewClosedOrder4() *ClosedOrder4 {
@@ -108,6 +110,7 @@ func (nc *ClosedOrder4) Calculate(
 	return (f(a) + 3.0*f(a+h) + 3.0*f(a+2.0*h) + f(b)) * (h * 3.0 / 8.0)
 }
 
+// OpenOrder2 é o metodo de newton-cotes aberto de ordem 2
 type OpenOrder2 struct{}
 
 func NewOpenOrder2() *OpenOrder2 {
@@ -122,6 +125,7 @@ func (nc *OpenOrder2) Calculate(
 	return (f(a+h) + f(a+2.0*h)) * (3.0 * h / 2.0)
 }
 
+// OpenOrder3 é o metodo de newton-cotes aberto de ordem 3
 type OpenOrder3 struct{}
 
 func NewOpenOrder3() *OpenOrder3 {
@@ -136,6 +140,7 @@ func (nc *OpenOrder3) Calculate(
 	return (2.0*f(a+h) - f(a+2.0*h) + 2.0*f(a+3.0*h)) * (h * 4.0 / 3.0)
 }
 
+// OpenOrder4 é o metodo de newton-cotes aberto de ordem 4
 type OpenOrder4 struct{}
 
 func NewOpenOrder4() *OpenOrder4 {
