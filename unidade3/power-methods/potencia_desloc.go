@@ -6,6 +6,7 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
+// PotenciaDeslocamento calcula o autovalor e autovetor de uma matriz A usando o método de potência deslocada.
 func PotenciaDeslocamento(
 	A *mat.Dense,
 	v0 *mat.VecDense,
@@ -13,33 +14,33 @@ func PotenciaDeslocamento(
 	mu float64,
 	maxIterations int,
 ) (*PowerMethodResult, error) {
-
 	r, c := A.Dims()
 	if r == 0 || r != c {
 		return nil, fmt.Errorf("the matrix A must be square and non-empty")
 	}
 
-	A_hat := mat.NewDense(r, c, nil)
-	A_hat.Copy(A)
+	AHat := mat.NewDense(r, c, nil)
+	AHat.Copy(A)
 
 	for i := range r {
-		currentVal := A_hat.At(i, i)
-		A_hat.Set(i, i, currentVal-mu)
+		// desloca a matriz A subtraindo mu da diagonal
+		currentVal := AHat.At(i, i)
+		AHat.Set(i, i, currentVal-mu)
 	}
 
-	inverseResult, invErr := PotenciaInversa(A_hat, v0, tolerance, maxIterations)
+	// menor autovalor e autovetor correspondente da matriz deslocada
+	inverseResult, invErr := PotenciaInversa(AHat, v0, tolerance, maxIterations)
 	if invErr != nil {
 		return nil, fmt.Errorf("the shifted matrix A_hat failed in the inverse power method: %v", invErr)
 	}
 
-	// ajust eigenvalue
-	lambda_i := inverseResult.Eigenvalue + mu
+	// ajusta o autovalor para o autovalor da matriz original
+	lambdaI := inverseResult.Eigenvalue + mu
 
-	x_i := inverseResult.Eigenvector
+	xI := inverseResult.Eigenvector
 
 	return &PowerMethodResult{
-		Eigenvalue:  lambda_i,
-		Eigenvector: x_i,
+		Eigenvalue:  lambdaI,
+		Eigenvector: xI,
 	}, nil
-
 }

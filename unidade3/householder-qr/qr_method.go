@@ -1,3 +1,4 @@
+// Package householderqr implements the QR method for finding eigenvalues and eigenvectors of a matrix using Householder transformations.
 package householderqr
 
 import (
@@ -11,6 +12,7 @@ type QRResult struct {
 	X      *mat.Dense
 }
 
+// QRDecomp perfomar a decomposição QR de uma matriz A usando transformações de Householder.
 func QRDecomp(A *mat.Dense) (*mat.Dense, *mat.Dense) {
 	n, m := A.Dims()
 	R := mat.DenseCopyOf(A)
@@ -29,7 +31,6 @@ func QRDecomp(A *mat.Dense) (*mat.Dense, *mat.Dense) {
 			cos := a / r
 			sen := -b / r
 
-			// Given's rotation matrix
 			G := NewIdentityMatrix(n, n)
 			G.Set(i-1, i-1, cos)
 			G.Set(i, i, cos)
@@ -48,6 +49,7 @@ func QRDecomp(A *mat.Dense) (*mat.Dense, *mat.Dense) {
 	return Q, R
 }
 
+// QRMethod aplica o método QR para encontrar os autovalores e autovetores de uma matriz T.
 func QRMethod(T, H *mat.Dense, epsilon float64) QRResult {
 	X := mat.DenseCopyOf(H)
 	A := mat.DenseCopyOf(T)
@@ -56,13 +58,13 @@ func QRMethod(T, H *mat.Dense, epsilon float64) QRResult {
 	error := 1.0
 
 	for error > epsilon {
-		// DecompQR of current A
+		// QRDecomp em A
 		Q, R := QRDecomp(A)
 
 		// A_k+1 = R_k * Q_k
 		A.Mul(R, Q)
 
-		// Acc the orthogonal transformations to obtain the eigenvectors.
+		// Acumula os autovetores
 		X.Mul(X, Q)
 
 		error = 0.0

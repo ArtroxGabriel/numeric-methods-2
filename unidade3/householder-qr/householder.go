@@ -11,6 +11,7 @@ type HouseholderResult struct {
 	H *mat.Dense
 }
 
+// NewIdentityMatrix cria uma matrix identdade r x c, where r = c
 func NewIdentityMatrix(r, c int) *mat.Dense {
 	h := mat.NewDense(r, c, nil)
 	for i := range r {
@@ -19,12 +20,13 @@ func NewIdentityMatrix(r, c int) *mat.Dense {
 	return h
 }
 
+// householderMatrix cria uma matriz de Householder para a coluna i de A
 func householderMatrix(A *mat.Dense, i int) *mat.Dense {
 	n, _ := A.Dims()
 	I := NewIdentityMatrix(n, n)
 
 	w := mat.NewVecDense(n, nil)
-	w_linha := mat.NewVecDense(n, nil)
+	wHat := mat.NewVecDense(n, nil)
 
 	col := A.ColView(i)
 	for j := i + 1; j < n; j++ {
@@ -34,21 +36,21 @@ func householderMatrix(A *mat.Dense, i int) *mat.Dense {
 	Lw := mat.Norm(w, 2)
 
 	if i+1 < n {
-		w_linha.SetVec(i+1, Lw)
+		wHat.SetVec(i+1, Lw)
 	}
 
 	N := mat.NewVecDense(n, nil)
-	N.SubVec(w, w_linha)
+	N.SubVec(w, wHat)
 
 	normN := mat.Norm(N, 2)
-	n_vec := mat.NewVecDense(n, nil)
+	nVec := mat.NewVecDense(n, nil)
 	if normN != 0 {
-		n_vec.ScaleVec(1/normN, N)
+		nVec.ScaleVec(1/normN, N)
 	}
 
-	n_vec_t := n_vec.T()
+	nVecT := nVec.T()
 	outerProd := mat.NewDense(n, n, nil)
-	outerProd.Mul(n_vec, n_vec_t)
+	outerProd.Mul(nVec, nVecT)
 
 	hMatrix := mat.NewDense(n, n, nil)
 	hMatrix.Scale(-2, outerProd)
@@ -57,26 +59,31 @@ func householderMatrix(A *mat.Dense, i int) *mat.Dense {
 	return hMatrix
 }
 
+// HouseholderMethod aplica o método de Householder para triangularizar a matriz A
 func HouseholderMethod(A *mat.Dense) HouseholderResult {
 	n, _ := A.Dims()
 	H := NewIdentityMatrix(n, n)
 
-	A_old := mat.DenseCopyOf(A)
-	A_new := mat.NewDense(n, n, nil)
+	AOld := mat.DenseCopyOf(A)
+	ANew := mat.NewDense(n, n, nil)
 
 	for i := range n - 2 {
-		Hi := householderMatrix(A_old, i)
+		// householderMatrix para a coluna i de A
+		Hi := householderMatrix(AOld, i)
 
+		// A_k+1 = H_k * A_k
 		temp := mat.NewDense(n, n, nil)
-		temp.Mul(A_old, Hi)
-		A_new.Mul(Hi.T(), temp)
+		temp.Mul(AOld, Hi)
+		ANew.Mul(Hi.T(), temp)
 
-		A_old.Copy(A_new)
+		// AOld = ANew
+		AOld.Copy(ANew)
 
+		// Atualiza a matriz de Householder
 		H.Mul(H, Hi)
 	}
 
-	return HouseholderResult{T: A_old, H: H}
+	return HouseholderResult{T: AOld, H: H}
 }
 
 func PrintMatrix(m mat.Matrix) {

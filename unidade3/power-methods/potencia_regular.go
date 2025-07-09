@@ -7,6 +7,7 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
+// PotenciaRegular calcula o maior autovalor e o autovetor correspondente de uma matriz A usando o método de potência regular.
 func PotenciaRegular(
 	a *mat.Dense,
 	x0 *mat.VecDense,
@@ -24,7 +25,7 @@ func PotenciaRegular(
 	}
 
 	if c != x0.Len() {
-		return nil, fmt.Errorf("The dimensions of the matrix and the vector are incompatible")
+		return nil, fmt.Errorf("the dimensions of the matrix and the vector are incompatible")
 	}
 
 	x := mat.NewVecDense(x0.Len(), nil)
@@ -38,14 +39,17 @@ func PotenciaRegular(
 	for i := range maxIterations {
 		y.MulVec(a, x)
 
+		// calcula o autovalor como a norma infinita do vetor y
 		eigenvalue = mat.Norm(y, math.Inf(0))
 
 		if eigenvalue == 0 {
 			return nil, fmt.Errorf("the eigenvalue is zero, it's not possible to normalize the eigenvector")
 		}
 
+		// normaliza o vetor y
 		x.ScaleVec(1/eigenvalue, y)
 
+		// verifica a convergência
 		if i > 0 && math.Abs((eigenvalue-oldEigenvalue)/eigenvalue) < tolerance {
 			return &PowerMethodResult{
 				Eigenvalue:  eigenvalue,
