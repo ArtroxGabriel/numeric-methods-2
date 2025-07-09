@@ -1,3 +1,4 @@
+// Package result package provides a structure to hold the result of an integration operation.
 package result
 
 type IntegrateResult struct {
