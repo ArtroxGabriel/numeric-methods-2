@@ -4,6 +4,7 @@ package gausshermite
 import "math"
 
 type GaussHermiteCalculator interface {
+	hermite()
 	Calculate(f func(float64) float64) float64
 }
 
@@ -19,6 +20,8 @@ var (
 
 type TwoPoints struct{}
 
+func (gh *TwoPoints) hermite() {}
+
 func NewTwoPoints() *TwoPoints {
 	return &TwoPoints{}
 }
@@ -32,6 +35,8 @@ type ThreePoints struct {
 	s [3]float64
 	w [3]float64
 }
+
+func (gh *ThreePoints) hermite() {}
 
 func NewThreePoints() *ThreePoints {
 	return &ThreePoints{
@@ -62,6 +67,8 @@ type FourPoints struct {
 	s [4]float64
 	w [4]float64
 }
+
+func (gh *FourPoints) hermite() {}
 
 func NewFourPoints() *FourPoints {
 	return &FourPoints{

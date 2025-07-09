@@ -4,6 +4,7 @@ package gausslaguerre
 import "math"
 
 type GaussLaguerreCalculator interface {
+	laguerre()
 	Calculate(f func(float64) float64) float64
 }
 
@@ -17,59 +18,104 @@ var (
 	_ GaussLaguerreCalculator = (*FourPoints)(nil)
 )
 
-type TwoPoints struct{}
+type TwoPoints struct {
+	s [2]float64
+	w [2]float64
+}
+
+func (gl *TwoPoints) laguerre() {}
 
 func NewTwoPoints() *TwoPoints {
-	return &TwoPoints{}
+	return &TwoPoints{
+		s: [2]float64{
+			2.0 - math.Sqrt2,
+			2.0 + math.Sqrt2,
+		},
+		w: [2]float64{
+			(2.0 + math.Sqrt2) / 4.0,
+			(2.0 - math.Sqrt2) / 4.0,
+		},
+	}
 }
 
 func (gl *TwoPoints) Calculate(f func(float64) float64) float64 {
-	x1 := 2 - math.Sqrt2
-	x2 := 2 + math.Sqrt2
-	return (x2*f(x1) + x1*f(x2)) * 0.25
+	acc := 0.0
+	for i := range gl.s {
+		acc += gl.w[i] * f(gl.s[i])
+	}
+
+	return acc
 }
 
-type ThreePoints struct{}
+type ThreePoints struct {
+	s [3]float64
+	w [3]float64
+}
+
+func (gl *ThreePoints) laguerre() {}
 
 func NewThreePoints() *ThreePoints {
-	return &ThreePoints{}
+	return &ThreePoints{
+		s: [3]float64{
+			0.415774556783479,
+			2.29428036027904,
+			6.28994508293748,
+		},
+	}
 }
 
 func (gl *ThreePoints) Calculate(f func(float64) float64) float64 {
-	x1 := 0.4157745568
-	x2 := 2.2942803603
-	x3 := 6.2899450829
+	w := func(xi float64) float64 {
+		L5 := (math.Pow(xi, 4) / 24.0) +
+			-(2.0 * xi * xi * xi / 3.0) +
+			(3.0 * xi * xi) +
+			-(4.0 * xi) + 1
 
-	w1 := 0.7110930099
-	w2 := 0.2785177336
-	w3 := 0.0103892565
+		return xi / (16.0 * L5 * L5)
+	}
 
-	return w1*f(x1) + w2*f(x2) + w3*f(x3)
+	acc := 0.0
+	for i := range gl.s {
+		acc += w(gl.s[i]) * f(gl.s[i])
+	}
+
+	return acc
 }
 
-type FourPoints struct{}
+type FourPoints struct {
+	s [4]float64
+	w [4]float64
+}
+
+func (gl *FourPoints) laguerre() {}
 
 func NewFourPoints() *FourPoints {
-	return &FourPoints{}
+	return &FourPoints{
+		// calculado com wolfram
+		s: [4]float64{
+			0.322547689619392,
+			1.74576110115835,
+			4.53662029692113,
+			9.39507091230113,
+		},
+	}
 }
 
 func (gl *FourPoints) Calculate(f func(float64) float64) float64 {
-	x := [...]float64{
-		0.32255,
-		1.7558,
-		4.5366,
-		9.3951,
-	}
-
 	w := func(xi float64) float64 {
 		L5 := -(math.Pow(xi, 5) / 120.0) +
-			(5 * math.Pow(xi, 4) / 24.0) +
-			-(5 * xi * xi * xi / 3.0) +
-			(5 * xi * xi) +
-			-(5 * xi) + 1
+			(5.0 * math.Pow(xi, 4) / 24.0) +
+			-(5.0 * xi * xi * xi / 3.0) +
+			(5.0 * xi * xi) +
+			-(5.0 * xi) + 1
 
 		return xi / (25.0 * L5 * L5)
 	}
 
-	return w(x[0])*f(x[0]) + w(x[1])*f(x[1]) + w(x[2])*f(x[2]) + w(x[3])*f(x[3])
+	var acc float64
+	for i := range gl.s {
+		acc += w(gl.s[i]) * f(gl.s[i])
+	}
+
+	return acc
 }
