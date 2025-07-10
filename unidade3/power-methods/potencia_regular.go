@@ -9,12 +9,12 @@ import (
 
 // PotenciaRegular calcula o maior autovalor e o autovetor correspondente de uma matriz A usando o método de potência regular.
 func PotenciaRegular(
-	a *mat.Dense,
-	x0 *mat.VecDense,
+	matrixA *mat.Dense,
+	initialVector *mat.VecDense,
 	tolerance float64,
-	maxIterations int,
+	maxIterations uint64,
 ) (*PowerMethodResult, error) {
-	r, c := a.Dims()
+	r, c := matrixA.Dims()
 
 	if r != c {
 		return nil, fmt.Errorf("matrix must be square")
@@ -24,20 +24,20 @@ func PotenciaRegular(
 		return nil, fmt.Errorf("matrix cannot be empty")
 	}
 
-	if c != x0.Len() {
+	if c != initialVector.Len() {
 		return nil, fmt.Errorf("the dimensions of the matrix and the vector are incompatible")
 	}
 
-	x := mat.NewVecDense(x0.Len(), nil)
-	x.CopyVec(x0)
+	x := mat.NewVecDense(initialVector.Len(), nil)
+	x.CopyVec(initialVector)
 
-	y := mat.NewVecDense(x0.Len(), nil)
+	y := mat.NewVecDense(initialVector.Len(), nil)
 
 	var oldEigenvalue float64
 	var eigenvalue float64
 
 	for i := range maxIterations {
-		y.MulVec(a, x)
+		y.MulVec(matrixA, x)
 
 		// calcula o autovalor como a norma infinita do vetor y
 		eigenvalue = mat.Norm(y, math.Inf(0))

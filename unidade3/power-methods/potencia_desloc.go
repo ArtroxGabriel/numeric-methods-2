@@ -12,7 +12,7 @@ func PotenciaDeslocamento(
 	v0 *mat.VecDense,
 	tolerance float64,
 	mu float64,
-	maxIterations int,
+	maxIterations uint64,
 ) (*PowerMethodResult, error) {
 	r, c := A.Dims()
 	if r == 0 || r != c {
