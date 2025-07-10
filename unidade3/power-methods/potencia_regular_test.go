@@ -1,9 +1,9 @@
 package powermethods_test
 
 import (
-	powermethods "potencia/power-methods"
 	"testing"
 
+	powermethods "github.com/ArtroxGabriel/numeric-methods-2/unidade3/power-methods"
 	"github.com/stretchr/testify/assert"
 	"gonum.org/v1/gonum/mat"
 )

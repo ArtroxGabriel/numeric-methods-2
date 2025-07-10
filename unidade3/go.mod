@@ -1,4 +1,4 @@
-module potencia
+module github.com/ArtroxGabriel/numeric-methods-2/unidade3
 
 go 1.24.4
 

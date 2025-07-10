@@ -12,8 +12,8 @@ type HouseholderResult struct {
 }
 
 // NewIdentityMatrix cria uma matrix identdade r x c, where r = c
-func NewIdentityMatrix(r, c int) *mat.Dense {
-	h := mat.NewDense(r, c, nil)
+func NewIdentityMatrix(r int) *mat.Dense {
+	h := mat.NewDense(r, r, nil)
 	for i := range r {
 		h.Set(i, i, 1.0)
 	}
@@ -23,46 +23,43 @@ func NewIdentityMatrix(r, c int) *mat.Dense {
 // householderMatrix cria uma matriz de Householder para a coluna i de A
 func householderMatrix(A *mat.Dense, i int) *mat.Dense {
 	n, _ := A.Dims()
-	I := NewIdentityMatrix(n, n)
+	I := NewIdentityMatrix(n)
 
 	w := mat.NewVecDense(n, nil)
-	wHat := mat.NewVecDense(n, nil)
-
 	col := A.ColView(i)
 	for j := i + 1; j < n; j++ {
 		w.SetVec(j, col.AtVec(j))
 	}
 
-	Lw := mat.Norm(w, 2)
-
+	Lw := w.Norm(2)
+	wHat := mat.NewVecDense(n, nil)
 	if i+1 < n {
 		wHat.SetVec(i+1, Lw)
 	}
 
 	N := mat.NewVecDense(n, nil)
+	// N = w - wHat
 	N.SubVec(w, wHat)
 
-	normN := mat.Norm(N, 2)
+	normN := N.Norm(2)
 	nVec := mat.NewVecDense(n, nil)
-	if normN != 0 {
+	if normN >= 1e-12 {
 		nVec.ScaleVec(1/normN, N)
 	}
 
-	nVecT := nVec.T()
-	outerProd := mat.NewDense(n, n, nil)
-	outerProd.Mul(nVec, nVecT)
+	outerProd := new(mat.Dense)
+	outerProd.Outer(2, nVec, nVec)
 
-	hMatrix := mat.NewDense(n, n, nil)
-	hMatrix.Scale(-2, outerProd)
-	hMatrix.Add(I, hMatrix)
+	matrixH := new(mat.Dense)
+	matrixH.Sub(I, outerProd)
 
-	return hMatrix
+	return matrixH
 }
 
 // HouseholderMethod aplica o método de Householder para triangularizar a matriz A
 func HouseholderMethod(A *mat.Dense) HouseholderResult {
 	n, _ := A.Dims()
-	H := NewIdentityMatrix(n, n)
+	H := NewIdentityMatrix(n)
 
 	AOld := mat.DenseCopyOf(A)
 	ANew := mat.NewDense(n, n, nil)
@@ -72,7 +69,7 @@ func HouseholderMethod(A *mat.Dense) HouseholderResult {
 		Hi := householderMatrix(AOld, i)
 
 		// A_k+1 = H_k * A_k
-		temp := mat.NewDense(n, n, nil)
+		temp := new(mat.Dense)
 		temp.Mul(AOld, Hi)
 		ANew.Mul(Hi.T(), temp)
 

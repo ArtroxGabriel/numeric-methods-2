@@ -14,12 +14,11 @@ type QRResult struct {
 
 // QRDecomp perfomar a decomposição QR de uma matriz A usando transformações de Householder.
 func QRDecomp(A *mat.Dense) (*mat.Dense, *mat.Dense) {
-	n, m := A.Dims()
+	n, _ := A.Dims()
 	R := mat.DenseCopyOf(A)
+	Q := NewIdentityMatrix(n)
 
-	Q := NewIdentityMatrix(n, m)
-
-	for j := range m {
+	for j := range n {
 		for i := n - 1; i > j; i-- {
 			a := R.At(i-1, j)
 			b := R.At(i, j)
@@ -28,21 +27,21 @@ func QRDecomp(A *mat.Dense) (*mat.Dense, *mat.Dense) {
 			if r < 1e-15 {
 				continue
 			}
+
 			cos := a / r
 			sen := -b / r
 
-			G := NewIdentityMatrix(n, n)
+			G := NewIdentityMatrix(n)
 			G.Set(i-1, i-1, cos)
 			G.Set(i, i, cos)
 			G.Set(i-1, i, -sen)
 			G.Set(i, i-1, sen)
 
-			// R = G * R e Q = Q * G^T
-			tempR := mat.DenseCopyOf(R)
-			R.Mul(G, tempR)
+			// R = G * R
+			R.Mul(G, R)
 
-			tempQ := mat.DenseCopyOf(Q)
-			Q.Mul(tempQ, G.T())
+			// Q = Q * G^T
+			Q.Mul(Q, G.T())
 		}
 	}
 
@@ -68,8 +67,10 @@ func QRMethod(T, H *mat.Dense, epsilon float64) QRResult {
 		X.Mul(X, Q)
 
 		error = 0.0
-		for j := 0; j < n-1; j++ {
-			error += math.Abs(A.At(j+1, j))
+		for j := range n - 1 {
+			for i := j + 1; i < n; i++ {
+				error += math.Abs(A.At(i, j))
+			}
 		}
 	}
 
