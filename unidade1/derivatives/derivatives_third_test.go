@@ -7,31 +7,16 @@ import (
 	"testing"
 
 	"github.com/ArtroxGabriel/numeric-methods-2/unidade1/derivatives"
-	"github.com/ArtroxGabriel/numeric-methods-2/unidade1/derivatives/first"
+	"github.com/ArtroxGabriel/numeric-methods-2/unidade1/derivatives/third"
 	"github.com/stretchr/testify/assert"
 )
 
-// f(x) = x³
-func cubicFunc(xi float64) float64 {
-	return xi * xi * xi
+// f”'(x) = 24x
+func cubicFuncD3(xi float64) float64 {
+	return 24.0 * xi
 }
 
-// f'(x) = 3x²
-func cubicFuncD1(xi float64) float64 {
-	return 3 * xi * xi
-}
-
-// f”(x) = 6x
-func cubicFuncD2(xi float64) float64 {
-	return 6 * xi
-}
-
-// f”'(x) = 6x
-func cubicFuncD3(_ float64) float64 {
-	return 6.0
-}
-
-func TestDerivatives_order1(t *testing.T) {
+func TestDerivatives_third_order1(t *testing.T) {
 	// arrange log
 	t.Parallel()
 	opts := &slog.HandlerOptions{
@@ -54,19 +39,19 @@ func TestDerivatives_order1(t *testing.T) {
 		expected         float64
 	}{
 		{
-			name:             "FirstForwardO1",
-			derivativeMethod: first.NewForward(order),
-			expected:         cubicFuncD1(x),
+			name:             "thirdForwardO1",
+			derivativeMethod: third.NewForward(order),
+			expected:         cubicFuncD3(x),
 		},
 		{
-			name:             "FirstBackwardO1",
-			derivativeMethod: first.NewBackward(order),
-			expected:         cubicFuncD1(x),
+			name:             "thirdBackwardO1",
+			derivativeMethod: third.NewBackward(order),
+			expected:         cubicFuncD3(x),
 		},
 		{
-			name:             "FirstCentralO2",
-			derivativeMethod: first.NewCentral(order),
-			expected:         cubicFuncD1(x),
+			name:             "thirdCentralO1",
+			derivativeMethod: third.NewCentral(order),
+			expected:         cubicFuncD3(x),
 		},
 	}
 
@@ -76,7 +61,11 @@ func TestDerivatives_order1(t *testing.T) {
 			// Executa a função de derivada que está sendo testada
 			ctx := context.Background()
 			method := tc.derivativeMethod
-			got := method.Calculate(ctx, cubicFunc, x, h)
+			got, err := method.Calculate(ctx, cubicFunc, x, h)
+
+			if !assert.NoError(t, err, "Erro ao calcular a derivada: %v", err) {
+				t.SkipNow()
+			}
 
 			assert.InDeltaf(t,
 				tc.expected,
@@ -89,7 +78,7 @@ func TestDerivatives_order1(t *testing.T) {
 	}
 }
 
-func TestDerivatives_order2(t *testing.T) {
+func TestDerivatives_third_order2(t *testing.T) {
 	// arrange log
 	t.Parallel()
 	opts := &slog.HandlerOptions{
@@ -112,19 +101,19 @@ func TestDerivatives_order2(t *testing.T) {
 		expected         float64
 	}{
 		{
-			name:             "FirstForwardO2",
-			derivativeMethod: first.NewForward(order),
-			expected:         cubicFuncD1(x),
+			name:             "thirdForwardO2",
+			derivativeMethod: third.NewForward(order),
+			expected:         cubicFuncD3(x),
 		},
 		{
-			name:             "FirstBackwardO2",
-			derivativeMethod: first.NewBackward(order),
-			expected:         cubicFuncD1(x),
+			name:             "thirdBackwardO2",
+			derivativeMethod: third.NewBackward(order),
+			expected:         cubicFuncD3(x),
 		},
 		{
-			name:             "FirstCentralO2",
-			derivativeMethod: first.NewCentral(order),
-			expected:         cubicFuncD1(x),
+			name:             "thirdCentralO2",
+			derivativeMethod: third.NewCentral(order),
+			expected:         cubicFuncD3(x),
 		},
 	}
 
@@ -134,7 +123,11 @@ func TestDerivatives_order2(t *testing.T) {
 			// Executa a função de derivada que está sendo testada
 			ctx := context.Background()
 			method := tc.derivativeMethod
-			got := method.Calculate(ctx, cubicFunc, x, h)
+			got, err := method.Calculate(ctx, cubicFunc, x, h)
+
+			if !assert.NoError(t, err, "Erro ao calcular a derivada: %v", err) {
+				t.SkipNow()
+			}
 
 			assert.InDeltaf(t,
 				tc.expected,
@@ -147,7 +140,7 @@ func TestDerivatives_order2(t *testing.T) {
 	}
 }
 
-func TestDerivatives_order3(t *testing.T) {
+func TestDerivatives_third_order3(t *testing.T) {
 	// arrange log
 	t.Parallel()
 	opts := &slog.HandlerOptions{
@@ -162,7 +155,7 @@ func TestDerivatives_order3(t *testing.T) {
 	order := uint64(3)
 
 	// tolerancia alta pq sao ruins
-	tolerance := 1e-4
+	tolerance := 1e-7
 
 	tests := []struct {
 		name             string
@@ -170,19 +163,19 @@ func TestDerivatives_order3(t *testing.T) {
 		expected         float64
 	}{
 		{
-			name:             "FirstForwardO3",
-			derivativeMethod: first.NewForward(order),
-			expected:         cubicFuncD1(x),
+			name:             "thirdForwardO3",
+			derivativeMethod: third.NewForward(order),
+			expected:         cubicFuncD3(x),
 		},
 		{
-			name:             "FirstBackwardO3",
-			derivativeMethod: first.NewBackward(order),
-			expected:         cubicFuncD1(x),
+			name:             "thirdBackwardO3",
+			derivativeMethod: third.NewBackward(order),
+			expected:         cubicFuncD3(x),
 		},
 		{
-			name:             "FirstCentralO3",
-			derivativeMethod: first.NewCentral(order),
-			expected:         cubicFuncD1(x),
+			name:             "thirdCentralO3",
+			derivativeMethod: third.NewCentral(order),
+			expected:         cubicFuncD3(x),
 		},
 	}
 
@@ -192,7 +185,11 @@ func TestDerivatives_order3(t *testing.T) {
 			// Executa a função de derivada que está sendo testada
 			ctx := context.Background()
 			method := tc.derivativeMethod
-			got := method.Calculate(ctx, cubicFunc, x, h)
+			got, err := method.Calculate(ctx, cubicFunc, x, h)
+
+			if !assert.NoError(t, err, "Erro ao calcular a derivada: %v", err) {
+				t.SkipNow()
+			}
 
 			assert.InDeltaf(t,
 				tc.expected,
@@ -205,7 +202,7 @@ func TestDerivatives_order3(t *testing.T) {
 	}
 }
 
-func TestDerivatives_order4(t *testing.T) {
+func TestDerivatives_third_order4(t *testing.T) {
 	// arrange log
 	t.Parallel()
 	opts := &slog.HandlerOptions{
@@ -220,7 +217,7 @@ func TestDerivatives_order4(t *testing.T) {
 	order := uint64(4)
 
 	// tolerancia alta pq sao ruins
-	tolerance := 1e-5
+	tolerance := 1e-7
 
 	tests := []struct {
 		name             string
@@ -228,19 +225,19 @@ func TestDerivatives_order4(t *testing.T) {
 		expected         float64
 	}{
 		{
-			name:             "FirstForwardO4",
-			derivativeMethod: first.NewForward(order),
-			expected:         cubicFuncD1(x),
+			name:             "thirdForwardO4",
+			derivativeMethod: third.NewForward(order),
+			expected:         cubicFuncD3(x),
 		},
 		{
-			name:             "FirstBackwardO4",
-			derivativeMethod: first.NewBackward(order),
-			expected:         cubicFuncD1(x),
+			name:             "thirdBackwardO4",
+			derivativeMethod: third.NewBackward(order),
+			expected:         cubicFuncD3(x),
 		},
 		{
-			name:             "FirstCentralO3",
-			derivativeMethod: first.NewCentral(order),
-			expected:         cubicFuncD1(x),
+			name:             "thirdCentralO4",
+			derivativeMethod: third.NewCentral(order),
+			expected:         cubicFuncD3(x),
 		},
 	}
 
@@ -250,7 +247,11 @@ func TestDerivatives_order4(t *testing.T) {
 			// Executa a função de derivada que está sendo testada
 			ctx := context.Background()
 			method := tc.derivativeMethod
-			got := method.Calculate(ctx, cubicFunc, x, h)
+			got, err := method.Calculate(ctx, cubicFunc, x, h)
+
+			if !assert.NoError(t, err, "Erro ao calcular a derivada: %v", err) {
+				t.SkipNow()
+			}
 
 			assert.InDeltaf(t,
 				tc.expected,

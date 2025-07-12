@@ -29,7 +29,7 @@ func NewCentral(errorOrder uint64) *Central {
 	case 4:
 		selectedFormula = centralOrder4
 	default:
-		panic(fmt.Sprintf("ordem de erro inválida para derivada progressiva: %d", errorOrder))
+		panic(fmt.Sprintf("ordem de erro inválida para derivada central: %d", errorOrder))
 	}
 
 	return &Central{
@@ -38,9 +38,9 @@ func NewCentral(errorOrder uint64) *Central {
 }
 
 // Calculate executa o cálculo da derivada usando a fórmula que foi definida no Newcentral.
-func (b *Central) Calculate(ctx context.Context, f derivatives.Func, x, h float64) float64 {
+func (b *Central) Calculate(ctx context.Context, f derivatives.Func, x, h float64) (float64, error) {
 	// A mágica acontece aqui: chamamos a fórmula que foi "injetada".
-	return b.formula(ctx, f, x, h)
+	return b.formula(ctx, f, x, h), nil
 }
 
 // centralOrder1 implementa a fórmula regressiva com erro O(h).
