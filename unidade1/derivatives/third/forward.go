@@ -2,7 +2,6 @@ package third
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 
@@ -44,25 +43,29 @@ func (b *Forward) Calculate(ctx context.Context, f derivatives.Func, x, h float6
 	return b.formula(ctx, f, x, h)
 }
 
-// forwardOrder1 implementa a fórmula regressiva com erro O(h).
-// forward euler method
 func forwardOrder1(ctx context.Context, f derivatives.Func, x, h float64) (float64, error) {
 	slog.DebugContext(ctx, "Calculando a derivada progressiva de ordem 1",
 		slog.Uint64("ordem", uint64(1)),
 		slog.Float64("x", x),
 		slog.Float64("h", h))
+	h3 := h * h * h
 
-	return 0.0, errors.New("forwardOrder1: not implemented yet")
+	result := (-f(x) + 3*f(x+h) - 3*f(x+2*h) + f(x+3*h)) / h3
+
+	return result, nil
 }
 
-// forwardOrder2 implementa a fórmula regressiva com erro O(h²).
 func forwardOrder2(ctx context.Context, f derivatives.Func, x, h float64) (float64, error) {
 	slog.DebugContext(ctx, "Calculando a derivada progressiva de ordem 2",
 		slog.Uint64("ordem", uint64(2)),
 		slog.Float64("x", x),
 		slog.Float64("h", h))
 
-	return 0.0, errors.New("forwardOrder2: not implemented yet")
+	h3 := h * h * h
+
+	numerador := (-4*f(x) + 15*f(x+h) - 21*f(x+2*h) + 13*f(x+3*h) - 3*f(x+4*h))
+
+	return numerador / h3, nil
 }
 
 func forwardOrder3(ctx context.Context, f derivatives.Func, x, h float64) (float64, error) {
@@ -71,7 +74,17 @@ func forwardOrder3(ctx context.Context, f derivatives.Func, x, h float64) (float
 		slog.Float64("x", x),
 		slog.Float64("h", h))
 
-	return 0.0, errors.New("forwardOrder3: not implemented yet")
+	h3 := h * h * h
+
+	//  (-23 A + 95 B - 154 C + 122 D - 47 E + 7 F)
+	numerador := (-23*f(x) +
+		95*f(x+h) +
+		-154*f(x+2*h) +
+		122*f(x+3*h) +
+		-47*f(x+4*h) +
+		7*f(x+5*h))
+
+	return numerador / (4 * h3), nil
 }
 
 func forwardOrder4(ctx context.Context, f derivatives.Func, x, h float64) (float64, error) {
@@ -80,5 +93,16 @@ func forwardOrder4(ctx context.Context, f derivatives.Func, x, h float64) (float
 		slog.Float64("x", x),
 		slog.Float64("h", h))
 
-	return 0.0, errors.New("forwardOrder3: not implemented yet")
+	h3 := h * h * h
+
+	//   (-61 A + 280 B - 533 C + 544 D - 319 E + 104 F - 15 G)
+	numerador := (-61*f(x) +
+		280*f(x+h) +
+		-533*f(x+2*h) +
+		544*f(x+3*h) +
+		-319*f(x+4*h) +
+		104*f(x+5*h) +
+		-15*f(x+6*h))
+
+	return numerador / (8 * h3), nil
 }

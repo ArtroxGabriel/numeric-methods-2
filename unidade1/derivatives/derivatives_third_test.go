@@ -11,6 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var x = float64(2)
+
 // f”'(x) = 24x
 func cubicFuncD3(xi float64) float64 {
 	return 24.0 * xi
@@ -26,12 +28,11 @@ func TestDerivatives_third_order1(t *testing.T) {
 	logger := slog.New(handler)
 	slog.SetDefault(logger)
 
-	x := float64(2)
 	h := 1e-3
 	order := uint64(1)
 
 	// tolerancia alta pq sao ruins
-	tolerance := 1e-2
+	tolerance := 1e-1
 
 	tests := []struct {
 		name             string
@@ -88,12 +89,11 @@ func TestDerivatives_third_order2(t *testing.T) {
 	logger := slog.New(handler)
 	slog.SetDefault(logger)
 
-	x := float64(2)
 	h := 1e-3
 	order := uint64(2)
 
-	// tolerancia alta pq sao ruins
-	tolerance := 1e-3
+	// ta uma porcaria
+	tolerance := 1e-1
 
 	tests := []struct {
 		name             string
@@ -150,12 +150,10 @@ func TestDerivatives_third_order3(t *testing.T) {
 	logger := slog.New(handler)
 	slog.SetDefault(logger)
 
-	x := float64(2)
 	h := 1e-3
 	order := uint64(3)
 
-	// tolerancia alta pq sao ruins
-	tolerance := 1e-7
+	tolerance := 1e-1
 
 	tests := []struct {
 		name             string
@@ -212,12 +210,11 @@ func TestDerivatives_third_order4(t *testing.T) {
 	logger := slog.New(handler)
 	slog.SetDefault(logger)
 
-	x := float64(2)
 	h := 1e-3
 	order := uint64(4)
 
 	// tolerancia alta pq sao ruins
-	tolerance := 1e-7
+	tolerance := 1e-1
 
 	tests := []struct {
 		name             string

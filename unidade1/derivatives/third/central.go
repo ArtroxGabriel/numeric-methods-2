@@ -3,7 +3,6 @@ package third
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 
@@ -45,25 +44,30 @@ func (b *Central) Calculate(ctx context.Context, f derivatives.Func, x, h float6
 	return b.formula(ctx, f, x, h)
 }
 
-// centralOrder1 implementa a fórmula regressiva com erro O(h).
-// central euler method
 func centralOrder1(ctx context.Context, f derivatives.Func, x, h float64) (float64, error) {
 	slog.DebugContext(ctx, "Calculando a derivada progressiva de ordem 1",
 		slog.Uint64("ordem", uint64(1)),
 		slog.Float64("x", x),
 		slog.Float64("h", h))
 
-	return 0.0, errors.New("centralOrder1: not implemented yet")
+	h3 := h * h * h
+
+	result := (-f(x-1.5*h) + 3*f(x-0.5*h) - 3*f(x+0.5*h) + f(x+1.5*h)) / h3
+
+	return result, nil
 }
 
-// centralOrder2 implementa a fórmula regressiva com erro O(h²).
 func centralOrder2(ctx context.Context, f derivatives.Func, x, h float64) (float64, error) {
 	slog.DebugContext(ctx, "Calculando a derivada progressiva de ordem 2",
 		slog.Uint64("ordem", uint64(2)),
 		slog.Float64("x", x),
 		slog.Float64("h", h))
 
-	return 0.0, errors.New("centralOrder2: not implemented yet")
+	h3 := h * h * h
+
+	numerador := (-2*f(x-2*h) + 7*f(x-h) - 9*f(x) + 5*f(x+h) - f(x+2*h))
+
+	return numerador / h3, nil
 }
 
 func centralOrder3(ctx context.Context, f derivatives.Func, x, h float64) (float64, error) {
@@ -72,7 +76,17 @@ func centralOrder3(ctx context.Context, f derivatives.Func, x, h float64) (float
 		slog.Float64("x", x),
 		slog.Float64("h", h))
 
-	return 0.0, errors.New("centralOrder3: not implemented yet")
+	h3 := h * h * h
+
+	// -11 A + 35 B - 38 C + 14 D + E - F
+	numerador := (-11*f(x-2.5*h) +
+		35*f(x-1.5*h) +
+		-38*f(x-0.5*h) +
+		14*f(x+0.5*h) +
+		f(x+1.5*h) +
+		-f(x+2.5*h))
+
+	return numerador / (8 * h3), nil
 }
 
 func centralOrder4(ctx context.Context, f derivatives.Func, x, h float64) (float64, error) {
@@ -80,6 +94,17 @@ func centralOrder4(ctx context.Context, f derivatives.Func, x, h float64) (float
 		slog.Uint64("ordem", uint64(4)),
 		slog.Float64("x", x),
 		slog.Float64("h", h))
+	h3 := h * h * h
 
-	return 0.0, errors.New("centralOrder3: not implemented yet")
+	// (-17 A + 70 B - 119 C + 108 D - 55 E + 14 F - G)
+	// mid is D, the dx to other is mul of h
+	numerador := (-17*f(x-3*h) +
+		70*f(x-2*h) +
+		-119*f(x-h) +
+		108*f(x) +
+		-55*f(x+h) +
+		14*f(x+2*h) +
+		-f(x+3*h))
+
+	return numerador / (8 * h3), nil
 }

@@ -2,7 +2,6 @@ package third
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 
@@ -52,7 +51,11 @@ func backwardOrder1(ctx context.Context, f derivatives.Func, x, h float64) (floa
 		slog.Float64("x", x),
 		slog.Float64("h", h))
 
-	return 0.0, errors.New("backwardOrder1: not implemented yet")
+	h3 := h * h * h
+
+	result := (-f(x-3*h) + 3*f(x-2*h) - 3*f(x-h) + f(x)) / h3
+
+	return result, nil
 }
 
 // backwardOrder2 implementa a fórmula regressiva com erro O(h²).
@@ -62,7 +65,11 @@ func backwardOrder2(ctx context.Context, f derivatives.Func, x, h float64) (floa
 		slog.Float64("x", x),
 		slog.Float64("h", h))
 
-	return 0.0, errors.New("backwardOrder2: not implemented yet")
+	h3 := h * h * h
+
+	numerador := (-f(x-4*h) + 3*f(x-3*h) - 3*f(x-2*h) + f(x-h))
+
+	return numerador / h3, nil
 }
 
 func backwardOrder3(ctx context.Context, f derivatives.Func, x, h float64) (float64, error) {
@@ -71,7 +78,17 @@ func backwardOrder3(ctx context.Context, f derivatives.Func, x, h float64) (floa
 		slog.Float64("x", x),
 		slog.Float64("h", h))
 
-	return 0.0, errors.New("backwardOrder3: not implemented yet")
+	h3 := h * h * h
+
+	//   (-13 A + 65 B - 134 C + 142 D - 77 E + 17 F)
+	numerador := (-13*f(x-5*h) +
+		65*f(x-4*h) +
+		-134*f(x-3*h) +
+		142*f(x-2*h) +
+		-77*f(x-h) +
+		+17*f(x))
+
+	return numerador / (4 * h3), nil
 }
 
 func backwardOrder4(ctx context.Context, f derivatives.Func, x, h float64) (float64, error) {
@@ -80,5 +97,16 @@ func backwardOrder4(ctx context.Context, f derivatives.Func, x, h float64) (floa
 		slog.Float64("x", x),
 		slog.Float64("h", h))
 
-	return 0.0, errors.New("backwardOrder3: not implemented yet")
+	h3 := h * h * h
+
+	//  3 A - 56 B + 235 C - 448 D + 449 E - 232 F + 49 G)
+	numerador := (3*f(x-6*h) +
+		-56*f(x-5*h) +
+		235*f(x-4*h) +
+		-448*f(x-3*h) +
+		449*f(x-2*h) +
+		-232*f(x-h) +
+		49*f(x))
+
+	return numerador / (8 * h3), nil
 }
