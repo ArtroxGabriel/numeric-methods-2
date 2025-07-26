@@ -5,12 +5,12 @@ import (
 	"context"
 	"log/slog"
 
+	"github.com/ArtroxGabriel/numeric-methods-2/unidade4/types"
 	"gonum.org/v1/gonum/mat"
 )
 
 // y[x+1] = y[x] + h*f(x, y[x])
 
-type DerivativeFunc func(context.Context, *mat.Dense, int) *mat.VecDense
 
 type ExplicitEuler struct{}
 
@@ -20,7 +20,7 @@ func NewExplicitEuler() *ExplicitEuler {
 
 func (em *ExplicitEuler) Execute(
 	ctx context.Context,
-	fc DerivativeFunc,
+	fc types.DerivativeFunc,
 	initialCondition *mat.VecDense,
 	initialTime, h float64,
 ) *EulerResult {

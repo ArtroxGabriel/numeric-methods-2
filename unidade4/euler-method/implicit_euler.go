@@ -3,14 +3,9 @@ package eulermethod
 import (
 	"context"
 	"log/slog"
-	"math"
 
+	"github.com/ArtroxGabriel/numeric-methods-2/unidade4/types"
 	"gonum.org/v1/gonum/mat"
-)
-
-const (
-	MaxIterations = 100
-	eTolerance    = 1e-6
 )
 
 type ImplicitEuler struct {
@@ -25,7 +20,7 @@ func NewImplicitEuler() *ImplicitEuler {
 
 func (em *ImplicitEuler) getGuess(
 	ctx context.Context,
-	fc DerivativeFunc,
+	fc types.DerivativeFunc,
 	initialCondition *mat.VecDense,
 	initialTime, h float64,
 ) *EulerResult {
@@ -34,7 +29,7 @@ func (em *ImplicitEuler) getGuess(
 
 func (em *ImplicitEuler) Execute(
 	ctx context.Context,
-	fc DerivativeFunc,
+	fc types.DerivativeFunc,
 	initialCondition *mat.VecDense,
 	initialTime, h float64,
 ) *EulerResult {
@@ -45,32 +40,24 @@ func (em *ImplicitEuler) Execute(
 	)
 	r, c := 1, initialCondition.Len()
 
-	// return the guess nextStateHat by this formula: S_i + Δt*F(S_i,t_i)
+	// return the guess nextStateHat(S_{i+1}) by this formula: S_i + Δt*F(S_i,t_i)
 	guessResult := em.getGuess(ctx, fc, initialCondition, initialTime, h)
 
 	nextStateHat := mat.NewDense(r, c, nil)
 	nextStateHat.SetRow(0, guessResult.State.RawVector().Data)
-	slog.InfoContext(ctx, "Next State Hat copied")
+	slog.DebugContext(ctx, "Next State S_{i+1}_Hat copied")
 
 	nextState := mat.NewDense(r+1, c, nil)
-	var err float64
 
-	for iteration := 0; iteration < MaxIterations; {
-		// F(S_{i+1},t_{i+1})
-		tempState := fc(ctx, nextStateHat, 0)
+	// F(S_{i+1},t_{i+1})
+	tempState := fc(ctx, nextStateHat, 0)
 
-		// S_i + Δt*F(S_{i+1},t_{i+1})
-		tempState.AddScaledVec(initialCondition, h, tempState)
-		slog.DebugContext(ctx, "Computed next state refined",
-			slog.Any("nextState", tempState.RawVector().Data))
+	// S_i + Δt*F(S_{i+1},t_{i+1})
+	tempState.AddScaledVec(initialCondition, h, tempState)
+	slog.DebugContext(ctx, "Computed next state refined",
+		slog.Any("nextState", tempState.RawVector().Data))
 
-		err = calculateRelativeError(nextStateHat.RawRowView(0), tempState)
-		if err < eTolerance {
-			nextState.SetRow(1, tempState.RawVector().Data)
-			break
-		}
-		nextStateHat.SetRow(0, tempState.RawVector().Data)
-	}
+	nextState.SetRow(1, tempState.RawVector().Data)
 
 	// x_{i+1}
 	nextStateTime := initialTime + h
@@ -78,14 +65,8 @@ func (em *ImplicitEuler) Execute(
 	slog.InfoContext(ctx, "Computed next state refined",
 		slog.Float64("nextTime", nextStateTime),
 		slog.Any("nextState", nextState.RawRowView(1)),
-		slog.Float64("relative error", err),
 	)
 	return NewEulerResult(nextStateTime,
 		mat.NewVecDense(c, nextState.RawRowView(1)),
 	)
-}
-
-func calculateRelativeError(previousStateSlice []float64, nextState *mat.VecDense) float64 {
-	previousState := mat.NewVecDense(len(previousStateSlice), previousStateSlice)
-	return math.Abs(previousState.Norm(2)-nextState.Norm(2)) / previousState.Norm(2)
 }

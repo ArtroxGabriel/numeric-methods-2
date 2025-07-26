@@ -1,4 +1,4 @@
-package eulermethod_test
+package rungekutta_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	eulermethod "github.com/ArtroxGabriel/numeric-methods-2/unidade4/euler-method"
+	rungekutta "github.com/ArtroxGabriel/numeric-methods-2/unidade4/runge-kutta"
 	"github.com/ArtroxGabriel/numeric-methods-2/unidade4/types"
 	"github.com/stretchr/testify/assert"
 	"gonum.org/v1/gonum/mat"
@@ -22,20 +22,17 @@ func init() {
 	slog.SetDefault(logger)
 }
 
-func TestExplicitEuler_Execute(t *testing.T) {
-	delta := 1e-1
-
+func TestRungeKutta_Execute(t *testing.T) {
 	tests := []struct {
-		name string // description of this test case
-		// Named input parameters for target function.
+		name             string
 		fc               types.DerivativeFunc
 		initialCondition *mat.VecDense
 		initialTime      float64
 		h                float64
-		want             *eulermethod.EulerResult
+		want             *rungekutta.RungeKuttaResult
 	}{
 		{
-			name: "PVI - 1",
+			name: "PVI-1",
 			fc: func(ctx context.Context, v *mat.Dense, t int) *mat.VecDense {
 				slog.InfoContext(ctx, "Executing PVI - 1")
 				y := v.RowView(t)
@@ -51,13 +48,13 @@ func TestExplicitEuler_Execute(t *testing.T) {
 			initialCondition: mat.NewVecDense(1, []float64{2.0}),
 			initialTime:      0.0,
 			h:                0.5,
-			want: &eulermethod.EulerResult{
+			want: &rungekutta.RungeKuttaResult{
 				Time:  0.5,
 				State: mat.NewVecDense(1, []float64{2.79122}),
 			},
 		},
 		{
-			name: "PVI - 2",
+			name: "PVI-2",
 			fc: func(ctx context.Context, v *mat.Dense, t int) *mat.VecDense {
 				slog.InfoContext(ctx, "Executing PVI - 2")
 				y := v.RowView(t)
@@ -79,25 +76,49 @@ func TestExplicitEuler_Execute(t *testing.T) {
 			initialCondition: mat.NewVecDense(2, []float64{3, 150}),
 			initialTime:      0.0,
 			h:                0.1,
-			want: &eulermethod.EulerResult{
+			want: &rungekutta.RungeKuttaResult{
 				Time:  0.1,
-				State: mat.NewVecDense(2, []float64{1.763, 150.3}),
+				State: mat.NewVecDense(2, []float64{1.765, 150.235}),
 			},
 		},
 	}
+
+	orders := []struct {
+		name      string
+		rk        rungekutta.RungeKuttaInterface
+		tolerance float64
+	}{
+		{
+			name:      "Second Order",
+			rk:        rungekutta.NewRungeKuttaSecond(),
+			tolerance: 1e-2,
+		},
+		{
+			name:      "Third Order",
+			rk:        rungekutta.NewRungeKuttaThird(),
+			tolerance: 4e-3,
+		},
+		{
+			name:      "Fourth Order",
+			rk:        rungekutta.NewRungeKuttaFour(),
+			tolerance: 2e-3,
+		},
+	}
+
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			em := eulermethod.NewExplicitEuler()
-			got := em.Execute(context.Background(), tt.fc, tt.initialCondition, tt.initialTime, tt.h)
+		for _, order := range orders {
+			t.Run(tt.name+"_"+order.name, func(t *testing.T) {
+				ctx := context.Background()
+				got := order.rk.Execute(ctx, tt.fc, tt.initialCondition, tt.initialTime, tt.h)
 
-			assert.Equal(t, tt.want.Time, got.Time, "Time should match")
+				assert.Equal(t, tt.want.Time, got.Time, "Time should match")
 
-			expectedVector := tt.want.State.RawVector().Data
-			actualVector := got.State.RawVector().Data
+				expectedVector := tt.want.State.RawVector().Data
+				actualVector := got.State.RawVector().Data
 
-			// iterate over the slices and compare each element, compare with relative error:TestExplicitEuler_Execute
-			compareSlices(t, expectedVector, actualVector, delta)
-		})
+				compareSlices(t, expectedVector, actualVector, order.tolerance)
+			})
+		}
 	}
 }
 

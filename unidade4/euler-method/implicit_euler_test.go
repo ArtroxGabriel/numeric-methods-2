@@ -6,19 +6,18 @@ import (
 	"testing"
 
 	eulermethod "github.com/ArtroxGabriel/numeric-methods-2/unidade4/euler-method"
+	"github.com/ArtroxGabriel/numeric-methods-2/unidade4/types"
 	"github.com/stretchr/testify/assert"
 	"gonum.org/v1/gonum/mat"
 )
 
 func TestImplicitEuler_Execute(t *testing.T) {
-	t.Parallel()
-
 	delta := 4e-2
 
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
-		fc               eulermethod.DerivativeFunc
+		fc               types.DerivativeFunc
 		initialCondition *mat.VecDense
 		initialTime      float64
 		h                float64
@@ -42,7 +41,7 @@ func TestImplicitEuler_Execute(t *testing.T) {
 			initialTime:      0.0,
 			h:                0.5,
 			want: &eulermethod.EulerResult{
-				Time:  0.5,
+				Time: 0.5,
 				// the exactly value is 2.79122, but to expected is 3.0
 				State: mat.NewVecDense(1, []float64{3}),
 			},
