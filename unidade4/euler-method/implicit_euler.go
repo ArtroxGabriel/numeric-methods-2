@@ -50,7 +50,7 @@ func (em *ImplicitEuler) Execute(
 	nextState := mat.NewDense(r+1, c, nil)
 
 	// F(S_{i+1},t_{i+1})
-	tempState := fc(ctx, nextStateHat, 0)
+	tempState := fc(ctx, nextStateHat, 0, initialTime)
 
 	// S_i + Δt*F(S_{i+1},t_{i+1})
 	tempState.AddScaledVec(initialCondition, h, tempState)

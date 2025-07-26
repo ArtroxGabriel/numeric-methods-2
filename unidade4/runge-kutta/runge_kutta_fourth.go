@@ -44,7 +44,7 @@ func (rk *RungeKuttaFourthOrder) Execute(
 	states.SetRow(0, initialCondition.RawVector().Data)
 
 	// k1 = h * f(t_0, w_0)
-	k1 := fc(ctx, states, 0)
+	k1 := fc(ctx, states, 0, initialTime)
 	k1.ScaleVec(h, k1)
 
 	// w_1 = y_0 + k1/2
@@ -53,7 +53,7 @@ func (rk *RungeKuttaFourthOrder) Execute(
 	states.SetRow(1, w1.RawVector().Data)
 
 	// k2 = h * f(t_0 + h/2, w_1)
-	k2 := fc(ctx, states, 1)
+	k2 := fc(ctx, states, 1, initialTime+h/2)
 	k2.ScaleVec(h, k2)
 
 	// w_2 = y_0 + k2/2
@@ -62,7 +62,7 @@ func (rk *RungeKuttaFourthOrder) Execute(
 	states.SetRow(2, w2.RawVector().Data)
 
 	// k3 = h * f(t_0 + h/2, w_2)
-	k3 := fc(ctx, states, 2)
+	k3 := fc(ctx, states, 2, initialTime+h/2)
 	k3.ScaleVec(h, k3)
 
 	// w_3 = y_0 + k3
@@ -71,7 +71,7 @@ func (rk *RungeKuttaFourthOrder) Execute(
 	states.SetRow(3, w3.RawVector().Data)
 
 	// k4 = h * f(t_0 + h, w_3)
-	k4 := fc(ctx, states, 3)
+	k4 := fc(ctx, states, 3, initialTime+h)
 	k4.ScaleVec(h, k4)
 
 	// Final calculation: y_1 = y_0 + (h/6)(k1 + 2*k2 + 2*k3 + k4)

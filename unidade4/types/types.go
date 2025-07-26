@@ -7,4 +7,4 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-type DerivativeFunc func(context.Context, *mat.Dense, int) *mat.VecDense
+type DerivativeFunc func(context.Context, *mat.Dense, int, float64) *mat.VecDense

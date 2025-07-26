@@ -39,7 +39,7 @@ func (em *ExplicitEuler) Execute(
 
 	nextState := mat.NewDense(r+1, c, nil)
 	// Δt*F(S_i,t_i)
-	tempState := fc(ctx, previousState, 0)
+	tempState := fc(ctx, previousState, 0, initialTime)
 	tempState.AddScaledVec(previousState.RowView(0), h, tempState)
 	slog.DebugContext(ctx, "Computed next state", slog.Any("nextState", tempState.RawVector().Data))
 

@@ -33,9 +33,9 @@ func TestRungeKutta_Execute(t *testing.T) {
 	}{
 		{
 			name: "PVI-1",
-			fc: func(ctx context.Context, v *mat.Dense, t int) *mat.VecDense {
+			fc: func(ctx context.Context, v *mat.Dense, i int, _ float64) *mat.VecDense {
 				slog.InfoContext(ctx, "Executing PVI - 1")
-				y := v.RowView(t)
+				y := v.RowView(i)
 
 				result := mat.NewVecDense(y.Len(), nil)
 				result.ScaleVec(2.0/3.0, y)
@@ -55,9 +55,9 @@ func TestRungeKutta_Execute(t *testing.T) {
 		},
 		{
 			name: "PVI-2",
-			fc: func(ctx context.Context, v *mat.Dense, t int) *mat.VecDense {
+			fc: func(ctx context.Context, v *mat.Dense, i int, _ float64) *mat.VecDense {
 				slog.InfoContext(ctx, "Executing PVI - 2")
-				y := v.RowView(t)
+				y := v.RowView(i)
 
 				result := mat.NewVecDense(y.Len(), nil)
 

@@ -58,9 +58,9 @@ func (rk *RungeKuttaSecondOrder) Execute(
 	slog.DebugContext(ctx, "state i+1_hat copied")
 
 	// F(S_i,t_i)
-	tmpValCurrent := fc(ctx, nextStateHat, 0)
+	tmpValCurrent := fc(ctx, nextStateHat, 0, initialTime)
 	// F(S_{i+1},t_{i+1})
-	tmpValNext := fc(ctx, nextStateHat, 1)
+	tmpValNext := fc(ctx, nextStateHat, 1, initialTime+h)
 
 	// F(S_i,t_i) + F(S_{i+1},t_{i+1})
 	tmpValNext.AddVec(tmpValCurrent, tmpValNext)

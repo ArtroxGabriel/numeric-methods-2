@@ -61,14 +61,14 @@ func (rk *RungeKuttaThirdOrder) Execute(
 	}
 
 	// F(S_i,t_i)
-	tmpValCurrent := fc(ctx, nextStateHat, 0)
+	tmpValCurrent := fc(ctx, nextStateHat, 0, initialTime)
 
 	// F(S_{i+1/2},t_{i+1/2})
-	tmpValHalfStep := fc(ctx, nextStateHat, 1)
+	tmpValHalfStep := fc(ctx, nextStateHat, 1, initialTime+h/2)
 	tmpValHalfStep.ScaleVec(4, tmpValHalfStep)
 
 	// F(S_{i+1},t_{i+1})
-	tmpValNext := fc(ctx, nextStateHat, 2)
+	tmpValNext := fc(ctx, nextStateHat, 2, initialTime+h)
 
 	// F(S_i,t_i) + 4*F(S_{i+1/2},t_{i+1/2})
 	tmpValHalfStep.AddVec(tmpValCurrent, tmpValHalfStep)
