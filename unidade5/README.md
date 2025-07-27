@@ -6,7 +6,8 @@ Este projeto implementa um solucionador numérico para problemas de valor de con
 
 ## Desenvolvimento dos coeficientes para o exemplo
 
-imagem
+<img width="1600" height="804" alt="image" src="https://github.com/user-attachments/assets/b6c50b1f-075b-4a66-a27a-5a45331fbb60" />
+
 
 ## Estrutura do Projeto
 
