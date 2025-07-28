@@ -22,7 +22,24 @@ func TestPVC_Perfom(t *testing.T) {
 		{
 			name: "PVC-1",
 			input: &result.PVCInput{
-				MaskValues:   []float64{16, -33, 16},
+				MaskValues: func() []float64 {
+					maskFunctions := []func(float64) float64{
+						func(dx float64) float64 {
+							return 1.0 / (dx * dx)
+						},
+						func(dx float64) float64 {
+							return (-2.0 / (dx * dx)) - 1.0
+						},
+						func(dx float64) float64 {
+							return 1.0 / (dx * dx)
+						},
+					}
+					maskValues := make([]float64, len(maskFunctions))
+					for i, maskFunction := range maskFunctions {
+						maskValues[i] = maskFunction(0.25) // Using a step size of 0.25
+					}
+					return maskValues
+				}(),
 				A:            0,
 				B:            1,
 				InitialCond:  []float64{0, 1},

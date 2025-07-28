@@ -14,7 +14,7 @@ import (
 
 func init() {
 	opts := &slog.HandlerOptions{
-		Level: slog.LevelInfo,
+		Level: slog.LevelDebug,
 	}
 
 	logDir := "log"
@@ -44,14 +44,25 @@ func init() {
 func main() {
 	ctx := context.Background()
 
-	maskValues := []float64{
-		65,   // previous element
-		-201, // current element
-		135,  // next element
-	}
 	initialCond := []float64{
 		10, // x = 0
 		1,  // x = 2
+	}
+
+	maskFunctions := []func(float64) float64{
+		func(dx float64) float64 {
+			return ((1.0 / (dx * dx)) - (7.0 / (2.0 * dx)))
+		},
+		func(dx float64) float64 {
+			return ((-2.0 / (dx * dx)) - 1.0)
+		},
+		func(dx float64) float64 {
+			return ((1.0 / (dx * dx)) + (7.0 / (2.0 * dx)))
+		},
+	}
+	maskValues := make([]float64, len(maskFunctions))
+	for i, maskFunction := range maskFunctions {
+		maskValues[i] = maskFunction(0.1) // Using a step size of 0.1
 	}
 
 	pvcInput := &result.PVCInput{

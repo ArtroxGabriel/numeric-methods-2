@@ -8,7 +8,6 @@ Este projeto implementa um solucionador numérico para problemas de valor de con
 
 <img width="1600" height="804" alt="image" src="https://github.com/user-attachments/assets/b6c50b1f-075b-4a66-a27a-5a45331fbb60" />
 
-
 ## Estrutura do Projeto
 
 ```
@@ -40,7 +39,7 @@ Este projeto implementa um solucionador numérico para problemas de valor de con
 # Instalar dependências Go
 go mod tidy
 
-# Venv 
+# Venv
 python -m venv .venv
 source .venv/bin/activate
 
@@ -94,6 +93,7 @@ au_{i-1} + bu_i + cu_{i+1} = f_i
 ```
 
 Onde:
+
 - `a`, `b`, `c` são os valores da máscara
 - `f_i` é o valor do lado direito
 - Condições de contorno são aplicadas nas extremidades
@@ -131,6 +131,7 @@ Isso gera um gráfico mostrando a solução numérica ao longo do domínio.
 ## Log
 
 A aplicação usa log estruturado em JSON com os seguintes níveis:
+
 - **Info**: Informações gerais de operação
 - **Debug**: Passos detalhados de computação
 - **Error**: Condições de erro e falhas
